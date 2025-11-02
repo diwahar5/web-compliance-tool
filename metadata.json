@@ -1,5 +1,5 @@
 {
   "name": "Web Compliance Analysis with Auto Code Fix Generation",
-  "description": "An AI-powered tool to analyze websites for privacy regulation violations (GDPR, CCPA) and automatically generate framework-compatible code fixes using the Gemini API.",
+  "description": "An tool to analyze websites for privacy regulation violations (GDPR, CCPA) and automatically generate framework-compatible code fixes ",
   "requestFramePermissions": []
 }

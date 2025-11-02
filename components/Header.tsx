@@ -8,10 +8,8 @@ const ShieldIcon = () => (
 
 const Header = () => {
   return (
-    <header className="bg-brand-secondary/75 backdrop-blur-sm sticky top-0 z-10 border-b border-slate-200">
-      <div className="container mx-auto px-4 py-4 md:px-8 flex items-center justify-center">
-        <ShieldIcon />
-      </div>
+    // The header content and bottom border have been removed for a cleaner UI.
+    <header className="bg-brand-secondary/75 backdrop-blur-sm sticky top-0 z-10">
     </header>
   );
 };

@@ -26,6 +26,14 @@ const SeverityBadge: React.FC<{ severity: Violation['severity']; count: number }
     );
 };
 
+const StatCard: React.FC<{ label: string; value: number | string; colorClass?: string }> = ({ label, value, colorClass = 'text-brand-text' }) => (
+    <div className="text-center flex-1 min-w-[120px]">
+        <div className={`text-4xl font-bold ${colorClass}`}>{value}</div>
+        <div className="text-sm text-brand-subtle mt-1 tracking-wide">{label}</div>
+    </div>
+);
+
+
 const ReportView: React.FC<ReportViewProps> = ({ result, onCodeGenerated, generatedCode }) => {
     const groupedViolations = result.violations.reduce((acc, v) => {
         (acc[v.severity] = acc[v.severity] || []).push(v);
@@ -47,9 +55,16 @@ const ReportView: React.FC<ReportViewProps> = ({ result, onCodeGenerated, genera
                     </div>
                     <div className="text-center md:text-left">
                         <p className="text-brand-subtle leading-relaxed">
-                            The analysis for <a href={result.url} target="_blank" rel="noopener noreferrer" className="text-brand-accent hover:underline font-semibold">{result.url}</a> is complete. A total of <span className="text-brand-text font-semibold">{totalViolations}</span> violations were found, including <span className="text-brand-text font-semibold">{`${highSeverityCount} high-severity`}</span>, <span className="text-brand-text font-semibold">{`${mediumSeverityCount} medium-severity`}</span>, and <span className="text-brand-text font-semibold">{`${lowSeverityCount} low-severity`}</span> issues, indicating significant compliance risks that require attention.
+                            The analysis for <a href={result.url} target="_blank" rel="noopener noreferrer" className="text-brand-accent hover:underline font-semibold">{result.url}</a> is complete. The score indicates significant compliance risks that require your attention. See the breakdown of violations below.
                         </p>
                     </div>
+                </div>
+
+                <div className="mt-8 pt-6 border-t border-slate-700 flex flex-wrap justify-around gap-y-4 gap-x-2">
+                    <StatCard label="Total Violations" value={totalViolations} />
+                    <StatCard label="Critical/High" value={highSeverityCount} colorClass="text-red-400" />
+                    <StatCard label="Medium" value={mediumSeverityCount} colorClass="text-yellow-400" />
+                    <StatCard label="Low" value={lowSeverityCount} colorClass="text-gray-400" />
                 </div>
             </div>
 
