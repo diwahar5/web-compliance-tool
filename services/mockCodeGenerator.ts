@@ -448,6 +448,225 @@ const NewsletterForm = () => {
 `
     }
   },
+  'V-010': { // Missing 'Do Not Sell' Link
+    'React': {
+      code: `const Footer = () => (
+  <footer className="bg-brand-primary p-4 text-center">
+    {/* ... other footer content ... */}
+    <a href="/do-not-sell" className="text-brand-accent hover:underline">
+      Do Not Sell My Personal Information
+    </a>
+  </footer>
+);
+`,
+      guide: `
+- Under CCPA, this link is mandatory if your business 'sells' personal information. The definition of 'sell' is very broad.
+- Add this link to your global footer. It should lead to a page explaining the user's right to opt-out and providing a mechanism to do so.
+`
+    },
+    'HTML': {
+      code: `<footer>
+  <!-- ... other footer content ... -->
+  <a href="/donotsell.html">Do Not Sell My Personal Information</a>
+</footer>
+`,
+      guide: `
+- Place this link in the footer of every page.
+- The link must have the exact text "Do Not Sell My Personal Information".
+- Create a corresponding page that allows users to submit an opt-out request.
+`
+    }
+  },
+  'V-011': { // Undisclosed Financial Incentive
+    'React': {
+      code: `// This is a content fix for your privacy policy or sign-up form.
+const FinancialIncentiveNotice = () => (
+  <div className="text-sm text-brand-subtle p-4 border border-slate-700 rounded-md">
+    <h4 className="font-bold text-brand-text">Notice of Financial Incentive</h4>
+    <p>
+      We offer a 10% discount on your first purchase when you subscribe to our newsletter. By providing
+      your email, you agree to receive marketing communications. We value your privacy, and the value
+      of your data to us is reasonably related to the value of the discount provided. You may unsubscribe
+      at any time. For more details, see our Privacy Policy.
+    </p>
+  </div>
+);`,
+      guide: `
+- If you offer a benefit in exchange for personal data, you must provide a "Notice of Financial Incentive" under CCPA.
+- This notice should be presented at or before the point of data collection.
+- It must clearly explain the incentive and how the user can opt-in.
+`
+    },
+    'HTML': {
+      code: `<!-- Place this notice near the form where you collect the data (e.g., a newsletter sign-up) -->
+<div class="financial-incentive-notice">
+  <h4>Notice of Financial Incentive</h4>
+  <p>
+    We offer a 10% discount in exchange for your email address for marketing purposes.
+    This incentive is reasonably related to the value of your data. You can opt-out at any time.
+    Please see our <a href="/privacy-policy">Privacy Policy</a> for more details.
+  </p>
+</div>`,
+      guide: `
+- This notice is required by CCPA if you provide a different price or service quality in exchange for personal information.
+- Be transparent about the terms of the incentive.
+`
+    }
+  },
+  'V-012': { // PII Exposed in URL
+    'React': {
+      code: `// WRONG - Exposes email in URL
+// <a href={\`/profile?email=\${user.email}\`}>View Profile</a>
+
+// CORRECT - Uses a stable ID and fetches data on the page
+// <a href={\`/profile/\${user.id}\`}>View Profile</a>
+
+// On the profile page, you would then use the ID to fetch user data
+// from a secure API endpoint, preferably using a POST request for sensitive actions.
+function handleFormSubmit(email) {
+  // Use POST to send sensitive data
+  fetch('/api/update-profile', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email })
+  });
+}
+`,
+      guide: `
+- Never include plain-text personal data like emails, names, or addresses in URL query parameters.
+- Use non-identifiable slugs or IDs in URLs (e.g., /users/123 instead of /users/john.doe@email.com).
+- Send sensitive data in the body of a POST request, not in the URL.
+`
+    },
+    'HTML': {
+      code: `<!-- WRONG - Insecure form submission -->
+<!-- <form action="/search" method="GET"> -->
+<!--   <input type="email" name="user_email"> -->
+<!--   <button type="submit">Search</button> -->
+<!-- </form> -->
+
+<!-- CORRECT - Secure form submission -->
+<form action="/search" method="POST">
+  <input type="email" name="user_email">
+  <button type="submit">Search</button>
+</form>
+`,
+      guide: `
+- When submitting forms containing personal data, always use \`method="POST"\`.
+- Using \`method="GET"\` will append all form data to the URL, making it visible and insecure.
+`
+    }
+  },
+  'V-013': { // Undisclosed Third-Party Fonts
+    'React': {
+      code: `// In your main index.html or layout component:
+import './fonts/inter.css'; // Import local font CSS
+
+// To self-host, download the font files and include them in your project.
+// Then, in your CSS file (e.g., inter.css):
+/*
+@font-face {
+  font-family: 'Inter';
+  src: url('/fonts/Inter-Regular.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+}
+*/
+const PrivacyPolicyFontsSection = () => (
+  <div>
+    <p>This site uses fonts from Google Fonts; by using our site, you agree to their privacy policy.</p>
+  </div>
+);
+`,
+      guide: `
+- **Disclosure:** Add a line to your privacy policy mentioning that you use a third-party font provider (like Google Fonts) and that it may collect the user's IP address.
+- **Self-Hosting (Best Practice):** For maximum privacy, download the font files and host them on your own server. This prevents any data from being sent to the third-party provider.
+`
+    },
+    'HTML': {
+      code: `<!-- Method 1: Disclosure in Privacy Policy -->
+<p>Our website uses fonts from Google Fonts, which may collect your IP address. For more information, please see Google's privacy policy.</p>
+
+<!-- Method 2: Self-Hosting (Recommended) -->
+<!-- 1. Download the font files (e.g., .woff2) -->
+<!-- 2. Link a local stylesheet in your <head> -->
+<link rel="stylesheet" href="/css/fonts.css">
+
+<!-- 3. Define the @font-face in fonts.css -->
+/*
+@font-face {
+  font-family: 'Open Sans';
+  src: url('../fonts/opensans.woff2') format('woff2');
+}
+*/`,
+      guide: `
+- Loading fonts from services like Google Fonts sends user IP addresses to that service.
+- The easiest fix is to disclose this in your privacy policy.
+- The best fix is to download the fonts and host them on your own server, which stops the data transfer completely.
+`
+    }
+  },
+  'V-014': { // Lack of Age-Gating
+    'React': {
+      code: `import { useState } from 'react';
+
+const AgeGate = ({ onVerified }) => {
+  const [birthDate, setBirthDate] = useState('');
+  
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const age = new Date().getFullYear() - new Date(birthDate).getFullYear();
+    if (age >= 13) { // Use appropriate age for your jurisdiction
+      onVerified();
+    } else {
+      alert("You must be at least 13 to register.");
+      // Logic for parental consent would be required here
+    }
+  };
+
+  return (
+    <form onSubmit={handleSubmit}>
+      <label>Please enter your date of birth:</label>
+      <input type="date" value={birthDate} onChange={e => setBirthDate(e.target.value)} required />
+      <button type="submit">Continue</button>
+    </form>
+  );
+};
+`,
+      guide: `
+- If your service is not intended for children, an age-gate can help prevent them from signing up.
+- If your service *is* for children or could attract them, you must implement a robust process to get verifiable parental consent *before* collecting any personal information (this is a complex legal requirement).
+- The age of consent varies (e.g., 13 under COPPA in the US, 13-16 in the EU under GDPR).
+`
+    },
+    'HTML': {
+      code: `<form id="age-gate-form">
+  <label for="birthdate">Please enter your date of birth to continue:</label>
+  <input type="date" id="birthdate" name="birthdate" required>
+  <button type="submit">Verify Age</button>
+</form>
+
+<script>
+  document.getElementById('age-gate-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const birthDate = new Date(e.target.birthdate.value);
+    const age = new Date().getFullYear() - birthDate.getFullYear();
+    // This is a simplified check
+    if (age < 13) {
+      alert('Sorry, you do not meet the minimum age requirement.');
+    } else {
+      alert('Thank you for verifying.');
+      // Proceed with registration
+    }
+  });
+</script>
+`,
+      guide: `
+- An age gate is the first step in complying with laws like COPPA (USA) and GDPR Article 8 (EU).
+- This simple client-side check can be easily bypassed. For full compliance when dealing with children's data, a more secure server-side check and a parental consent flow are necessary.
+`
+    }
+  },
 };
 
 export const generateMockCodeFix = async (violation: Violation, framework: string): Promise<{code: string, guide: string}> => {
