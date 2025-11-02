@@ -1,7 +1,7 @@
 import React, { useState, useCallback } from 'react';
 import CodeSnippet from './CodeSnippet';
 import MarkdownRenderer from './MarkdownRenderer';
-import { generateCodeFix } from '../services/geminiService';
+import { generateMockCodeFix as generateCodeFix } from '../services/mockCodeGenerator';
 import type { Violation, ViolationSeverity } from '../types';
 
 const severityBadgeConfig: Record<ViolationSeverity, string> = {
