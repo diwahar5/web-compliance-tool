@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 
 interface CodeSnippetProps {
-  code?: string;
-  language: string;
-  isLoading: boolean;
+    code?: string;
+    language: string;
+    isLoading: boolean;
 }
 
-export const CodeSnippet: React.FC<CodeSnippetProps> = ({ code, language, isLoading }) => {
+const CodeSnippet: React.FC<CodeSnippetProps> = ({ code, language, isLoading }) => {
   const [copied, setCopied] = useState(false);
 
   useEffect(() => {
@@ -22,7 +22,7 @@ export const CodeSnippet: React.FC<CodeSnippetProps> = ({ code, language, isLoad
       setCopied(true);
     }
   };
-  
+
   if (isLoading) {
     return (
       <div className="mt-4 w-full bg-brand-secondary p-4 rounded-md border border-slate-700 animate-pulse">
@@ -39,7 +39,7 @@ export const CodeSnippet: React.FC<CodeSnippetProps> = ({ code, language, isLoad
 
   return (
     <div className="mt-4 relative bg-brand-primary p-4 rounded-md border border-slate-700">
-      <button 
+      <button
         onClick={handleCopy}
         className="absolute top-2 right-2 p-1.5 rounded-md text-brand-subtle bg-brand-secondary hover:bg-slate-600 transition-colors duration-200"
         title="Copy to clipboard"
@@ -56,10 +56,10 @@ export const CodeSnippet: React.FC<CodeSnippetProps> = ({ code, language, isLoad
         )}
       </button>
       <pre className="text-sm text-brand-text whitespace-pre-wrap overflow-x-auto">
-        <code className={`language-${language}`}>
-          {code}
-        </code>
+        <code className={`language-${language}`}>{code}</code>
       </pre>
     </div>
   );
 };
+
+export default CodeSnippet;

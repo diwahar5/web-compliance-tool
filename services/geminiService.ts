@@ -1,15 +1,11 @@
 import { GoogleGenAI, Type } from "@google/genai";
-import { Violation, Framework } from '../types';
+import type { Violation } from "../types";
 
-if (!process.env.API_KEY) {
-    console.warn("API_KEY environment variable not set. Gemini API calls will fail.");
-}
+// FIX: Initialize GoogleGenAI with the API key from environment variables as per guidelines.
+const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY! });
-
-const generatePrompt = (violation: Violation, framework: Framework): string => {
+const generatePrompt = (violation: Violation, framework: string): string => {
     let framework_instructions = '';
-
     if (violation.type === 'No Mechanism for Data Subject Rights (DSAR)' && framework === 'React') {
         framework_instructions = `
         - For React, generate a complete, self-contained, and stylish UI component in a single .tsx file.
@@ -30,13 +26,11 @@ const generatePrompt = (violation: Violation, framework: Framework): string => {
         - For simple fixes like setting a cookie, provide the direct JavaScript command.
         `;
     }
-
-    // New logic to provide more context about the affected element
     const getElementContextLine = (): string => {
         if (!violation.element) {
-            return ''; // Return empty string if no element is specified
+            return '';
         }
-        let context_prefix = 'Affected Element/Context:'; // Default
+        let context_prefix = 'Affected Element/Context:';
         if (violation.type.toLowerCase().includes('cookie')) {
             context_prefix = 'Affected Cookie:';
         } else if (violation.type.toLowerCase().includes('script')) {
@@ -44,7 +38,6 @@ const generatePrompt = (violation: Violation, framework: Framework): string => {
         }
         return `- ${context_prefix} ${violation.element}`;
     }
-
     return `
         You are an expert AI developer creating code for a local development environment like VS Code. Your specialization is in web compliance and privacy law (GDPR, CCPA).
         Your task is to generate a production-ready, complete code file and a guide to fix a web compliance violation.
@@ -70,15 +63,13 @@ const generatePrompt = (violation: Violation, framework: Framework): string => {
     `.trim();
 };
 
-export const generateCodeFix = async (violation: Violation, framework: Framework): Promise<{ code: string; guide: string; }> => {
+export const generateCodeFix = async (violation: Violation, framework: string): Promise<{code: string, guide: string}> => {
     const fallbackResponse = {
       code: `// Could not generate code for ${framework}.`,
       guide: `// No guide available. Please check your Gemini API key and network status.`
     };
-
     try {
         const prompt = generatePrompt(violation, framework);
-        
         const response = await ai.models.generateContent({
             model: 'gemini-2.5-flash',
             contents: prompt,
@@ -94,17 +85,14 @@ export const generateCodeFix = async (violation: Violation, framework: Framework
                 },
             },
         });
-
         const jsonString = response.text;
         if (jsonString) {
-          // Sometimes the model might return a string that is not perfectly formatted JSON, so we clean it
+          // The response might contain markdown fences for JSON, which need to be stripped.
           const cleanedJson = jsonString.replace(/```json/g, '').replace(/```/g, '').trim();
           const parsed = JSON.parse(cleanedJson);
           return parsed;
         }
-
         return fallbackResponse;
-
     } catch (error) {
         console.error("Error generating code fix with Gemini API:", error);
         return {

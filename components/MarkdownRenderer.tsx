@@ -1,21 +1,17 @@
 import React from 'react';
 
-interface MarkdownRendererProps {
-  content: string;
-}
-
-// A simple parser to handle bold text and bulleted lists.
-// Fix: Use React.JSX.Element to specify the return type explicitly and resolve "Cannot find namespace 'JSX'".
-const parseMarkdownToJsx = (markdown: string): React.JSX.Element[] => {
+// A simple and safe markdown to JSX parser
+// FIX: Changed JSX.Element to React.ReactElement to resolve namespace error on line 4.
+const parseMarkdownToJsx = (markdown: string): React.ReactElement[] => {
     if (!markdown) return [];
 
     const lines = markdown.split('\n').filter(line => line.trim() !== '');
-    // Fix: Use React.JSX.Element for the elements array type to resolve "Cannot find namespace 'JSX'".
-    const elements: React.JSX.Element[] = [];
+    // FIX: Changed JSX.Element to React.ReactElement to resolve namespace error on line 8.
+    const elements: React.ReactElement[] = [];
     let currentListItems: string[] = [];
 
+    // Simple inline parser for **bold** text
     const processLine = (line: string): string => {
-        // BOLD: **text** -> <strong>text</strong>
         return line.replace(/\*\*(.*?)\*\*/g, '<strong class="text-brand-text">$1</strong>');
     };
 
@@ -36,19 +32,25 @@ const parseMarkdownToJsx = (markdown: string): React.JSX.Element[] => {
         if (line.trim().startsWith('- ')) {
             currentListItems.push(line.trim().substring(2));
         } else {
-            flushList(); // End any current list
+            flushList();
             elements.push(
                 <p key={`p-${index}`} dangerouslySetInnerHTML={{ __html: processLine(line) }} />
             );
         }
     });
-
+    
     flushList(); // Add any remaining list items
 
     return elements;
 };
 
-export const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content }) => {
+interface MarkdownRendererProps {
+    content: string;
+}
+
+const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content }) => {
   const jsxElements = parseMarkdownToJsx(content);
   return <div className="space-y-3">{jsxElements}</div>;
 };
+
+export default MarkdownRenderer;

@@ -1,4 +1,5 @@
-import { AnalysisResult } from '../types';
+// FIX: Use `import type` for type-only imports to resolve potential module resolution errors with `types.ts`.
+import type { AnalysisResult } from '../types';
 
 // The URL of the Python backend.
 // In a real production app, this would be an environment variable.

@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
 
 interface UrlInputFormProps {
-  onScan: (url: string) => void;
-  isLoading: boolean;
+    onScan: (url: string) => void;
+    isLoading: boolean;
 }
 
-export const UrlInputForm: React.FC<UrlInputFormProps> = ({ onScan, isLoading }) => {
-  const [url, setUrl] = useState<string>('');
+const UrlInputForm: React.FC<UrlInputFormProps> = ({ onScan, isLoading }) => {
+  const [url, setUrl] = useState('');
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     onScan(url);
   };
@@ -27,7 +27,7 @@ export const UrlInputForm: React.FC<UrlInputFormProps> = ({ onScan, isLoading })
                     onChange={(e) => setUrl(e.target.value)}
                     placeholder="https://example.com"
                     required
-                    className="flex-grow bg-brand-primary border border-slate-300 text-brand-text rounded-md px-4 py-3 focus:ring-2 focus:ring-brand-accent focus:outline-none transition-all duration-200 placeholder-brand-subtle/75"
+                    className="flex-grow min-w-0 bg-brand-primary border border-slate-300 text-brand-text rounded-md px-4 py-3 focus:ring-2 focus:ring-brand-accent focus:outline-none transition-all duration-200 placeholder-brand-subtle/75"
                     disabled={isLoading}
                 />
                 <button
@@ -43,12 +43,12 @@ export const UrlInputForm: React.FC<UrlInputFormProps> = ({ onScan, isLoading })
                             </svg>
                             Scanning...
                         </>
-                    ) : (
-                        'Scan Website'
-                    )}
+                    ) : ( 'Scan Website' )}
                 </button>
             </div>
         </form>
     </div>
   );
 };
+
+export default UrlInputForm;

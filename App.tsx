@@ -1,17 +1,16 @@
 import React, { useState, useCallback } from 'react';
-import { Header } from './components/Header';
-import { UrlInputForm } from './components/UrlInputForm';
-import { Loader } from './components/Loader';
-import { ReportView } from './components/ReportView';
-import { AnalysisResult, GeneratedCode } from './types';
-import { performScan } from './services/scannerService'; // UPDATED IMPORT
+import Header from './components/Header';
+import UrlInputForm from './components/UrlInputForm';
+import Loader from './components/Loader';
+import ReportView from './components/ReportView';
+import { performMockScan as performScan } from './services/mockScanner'; // Use mock scanner
+import type { AnalysisResult } from './types';
 
-const App: React.FC = () => {
-  const [url, setUrl] = useState<string>('');
+const App = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [analysisResult, setAnalysisResult] = useState<AnalysisResult | null>(null);
-  const [generatedCode, setGeneratedCode] = useState<GeneratedCode>({});
+  const [generatedCode, setGeneratedCode] = useState<Record<string, any>>({});
 
   const isValidUrl = (urlString: string): boolean => {
     try {
@@ -31,15 +30,12 @@ const App: React.FC = () => {
       setError('Invalid URL format. Please enter a full URL, including http:// or https://.');
       return;
     }
-
     setError(null);
     setIsLoading(true);
     setAnalysisResult(null);
     setGeneratedCode({});
-    setUrl(scanUrl);
-
+    
     try {
-      // UPDATED to call the new backend service
       const result = await performScan(scanUrl);
       setAnalysisResult(result);
     } catch (err) {
@@ -54,7 +50,7 @@ const App: React.FC = () => {
     }
   }, []);
 
-  const handleCodeGenerated = useCallback((violationId: string, framework: string, data: { code: string, guide: string }) => {
+  const handleCodeGenerated = useCallback((violationId: string, framework: string, data: { code: string; guide: string }) => {
     setGeneratedCode(prev => ({
       ...prev,
       [violationId]: {
@@ -86,7 +82,7 @@ const App: React.FC = () => {
           Privacy Compliance Scanner
         </h2>
         <p className="mt-4 text-lg text-brand-subtle">
-          Enter a website URL to perform a deep analysis of its GDPR & CCPA compliance.
+          Enter a website URL to perform a deep analysis of its GDPR &amp; CCPA compliance.
         </p>
         <div className="mt-8">
           <UrlInputForm onScan={handleScan} isLoading={isLoading} />

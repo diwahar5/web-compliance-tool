@@ -1,7 +1,6 @@
-
 import React from 'react';
 
-export const Loader: React.FC = () => {
+const Loader = () => {
   return (
     <div className="my-12 flex flex-col items-center justify-center text-center">
       <div className="relative">
@@ -17,3 +16,5 @@ export const Loader: React.FC = () => {
     </div>
   );
 };
+
+export default Loader;
