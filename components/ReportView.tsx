@@ -35,6 +35,7 @@ const ReportView: React.FC<ReportViewProps> = ({ result, onCodeGenerated, genera
     const highSeverityCount = (groupedViolations['High']?.length || 0) + (groupedViolations['Critical']?.length || 0);
     const mediumSeverityCount = groupedViolations['Medium']?.length || 0;
     const lowSeverityCount = groupedViolations['Low']?.length || 0;
+    const totalViolations = result.violations.length;
 
     return (
         <div className="mt-8 animate-fade-in">
@@ -46,7 +47,7 @@ const ReportView: React.FC<ReportViewProps> = ({ result, onCodeGenerated, genera
                     </div>
                     <div className="text-center md:text-left">
                         <p className="text-brand-subtle leading-relaxed">
-                            The analysis for <a href={result.url} target="_blank" rel="noopener noreferrer" className="text-brand-accent hover:underline font-semibold">{result.url}</a> is complete. It identified <span className="text-brand-text font-semibold">{`${highSeverityCount} high-severity`}</span>, <span className="text-brand-text font-semibold">{`${mediumSeverityCount} medium-severity`}</span>, and <span className="text-brand-text font-semibold">{`${lowSeverityCount} low-severity`}</span> violations, indicating significant compliance risks that require attention.
+                            The analysis for <a href={result.url} target="_blank" rel="noopener noreferrer" className="text-brand-accent hover:underline font-semibold">{result.url}</a> is complete. A total of <span className="text-brand-text font-semibold">{totalViolations}</span> violations were found, including <span className="text-brand-text font-semibold">{`${highSeverityCount} high-severity`}</span>, <span className="text-brand-text font-semibold">{`${mediumSeverityCount} medium-severity`}</span>, and <span className="text-brand-text font-semibold">{`${lowSeverityCount} low-severity`}</span> issues, indicating significant compliance risks that require attention.
                         </p>
                     </div>
                 </div>

@@ -667,6 +667,106 @@ const AgeGate = ({ onVerified }) => {
 `
     }
   },
+  'V-015': { // Missing 'Limit Use of Sensitive PII' Link
+    'React': {
+      code: `const Footer = () => (
+  <footer className="bg-brand-primary p-4 text-center">
+    {/* ... other footer content ... */}
+    <a href="/privacy-choices" className="text-brand-accent hover:underline">
+      Limit the Use of My Sensitive Personal Information
+    </a>
+  </footer>
+);`,
+      guide: `
+- The California Privacy Rights Act (CPRA) requires this link if you collect and use sensitive PII for purposes like advertising.
+- Add this link to your global footer. It should lead to a page explaining the user's right to limit the use of their data and provide a mechanism to do so.
+`
+    },
+    'HTML': {
+      code: `<footer>
+  <!-- ... other footer content ... -->
+  <a href="/limit-sensitive-info.html">Limit the Use of My Sensitive Personal Information</a>
+</footer>`,
+      guide: `
+- Place this link in the footer of every page.
+- The link must have the exact text "Limit the Use of My Sensitive Personal Information".
+- Create a corresponding page that allows users to submit an opt-out request.
+`
+    }
+  },
+  'V-016': { // Undefined Data Retention Periods
+    'React': {
+      code: `// This is a content fix for your privacy policy.
+const DataRetentionSection = () => (
+  <div>
+    <h3>Data Retention</h3>
+    <p>
+      We retain your personal data only for as long as necessary to fulfill the purposes
+      for which we collected it. The retention periods are as follows:
+    </p>
+    <ul>
+      <li><b>Account Information:</b> For the duration of your account's existence, and for 5 years after closure to comply with legal obligations.</li>
+      <li><b>Contact Form Submissions:</b> For 12 months after the inquiry is resolved.</li>
+      <li><b>Analytics Data:</b> Anonymized data is retained for 26 months.</li>
+    </ul>
+  </div>
+);`,
+      guide: `
+- The GDPR requires you to be transparent about how long you keep user data.
+- Add a "Data Retention" section to your privacy policy.
+- For each type of data you collect, specify a clear retention period or the criteria used to determine that period.
+`
+    },
+    'HTML': {
+      code: `<!-- Add a section like this to your privacy policy page -->
+<h3>Data Retention Policy</h3>
+<p>We store personal data for different periods of time depending on the purpose of collection:</p>
+<ul>
+  <li><b>User Account Data:</b> Retained as long as the account is active, and for a period of 2 years thereafter.</li>
+  <li><b>Marketing Email Subscriptions:</b> Retained until you unsubscribe.</li>
+  <li><b>Server Logs:</b> Retained for 90 days for security and debugging purposes.</li>
+</ul>`,
+      guide: `
+- Review all the personal data you collect and establish a retention schedule.
+- Clearly communicate these retention periods in your privacy policy. Avoid vague terms like "for as long as needed."
+`
+    }
+  },
+  'V-017': { // Incomplete Disclosure of Data Categories
+    'React': {
+      code: `// This is a content fix for your privacy policy, specific to CCPA.
+const CcpaCategoriesSection = () => (
+  <div>
+    <h3>Categories of Personal Information We Collect</h3>
+    <p>In the last 12 months, we have collected the following categories of personal information:</p>
+    <ul>
+      <li><b>Identifiers:</b> Such as name, email address, IP address. We collect this directly from you.</li>
+      <li><b>Internet or Other Electronic Network Activity Information:</b> Such as browsing history and interaction with our website. We collect this from your device via our analytics provider.</li>
+      <li><b>Commercial Information:</b> Such as records of products or services purchased. We collect this directly from you during checkout.</li>
+    </ul>
+  </div>
+);`,
+      guide: `
+- The CCPA requires you to explicitly list the categories of personal information you collect, using the specific terminology from the law.
+- You must also disclose the categories of sources for each type of information.
+- Add a detailed section like this to your privacy policy, tailored to your actual data collection practices.
+`
+    },
+    'HTML': {
+      code: `<!-- Add a detailed table or list to your privacy policy for CCPA compliance -->
+<h3>Information We Collect Under the CCPA</h3>
+<p>We collect information that identifies, relates to, describes, or is reasonably capable of being associated with a particular consumer or household. In the past 12 months, we have collected the following categories:</p>
+<ul>
+    <li><b>Identifiers:</b> (e.g., name, email, IP address). Source: Directly from you.</li>
+    <li><b>Commercial Information:</b> (e.g., purchase history). Source: Directly from you.</li>
+    <li><b>Internet Activity:</b> (e.g., interaction with our site). Source: Our analytics partners.</li>
+</ul>`,
+      guide: `
+- To comply with CCPA's "Right to Know," your privacy policy must be very specific.
+- Create a section that maps your data collection practices to the official categories defined in the CCPA statute.
+`
+    }
+  },
 };
 
 export const generateMockCodeFix = async (violation: Violation, framework: string): Promise<{code: string, guide: string}> => {
