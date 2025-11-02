@@ -1,5 +1,5 @@
 // Using express with type inference for route handlers.
-import express from 'express';
+import express, { Request, Response } from 'express';
 import cors from 'cors';
 import { scanWebsite } from './scanner';
 import { mapViolations } from './mapper';
@@ -12,9 +12,11 @@ const port = 8000;
 app.use(cors());
 app.use(express.json());
 
-// FIX: To resolve type errors, we now rely on Express's built-in type inference
-// for the request and response objects instead of explicit typing.
-app.post('/api/scan', async (req, res) => {
+// FIX: To resolve the "No overload matches this call" error, the request and
+// response objects are now explicitly typed. This helps TypeScript correctly
+// identify the route handler's signature and choose the correct `app.post` overload,
+// as type inference was failing in this case.
+app.post('/api/scan', async (req: Request, res: Response) => {
   const { url } = req.body as { url: string };
 
   if (!url) {
