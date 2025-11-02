@@ -11,9 +11,6 @@ const Header = () => {
     <header className="bg-brand-secondary/75 backdrop-blur-sm sticky top-0 z-10 border-b border-slate-200">
       <div className="container mx-auto px-4 py-4 md:px-8 flex items-center justify-center">
         <ShieldIcon />
-        <h1 className="ml-3 text-xl md:text-2xl font-bold tracking-tight text-brand-text">
-          Web Compliance &amp; AI Code Fix Generator
-        </h1>
       </div>
     </header>
   );

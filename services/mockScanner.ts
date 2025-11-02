@@ -49,6 +49,44 @@ const mockViolations: Violation[] = [
       category: 'User Rights',
       law: 'GDPR Chapter 3, CCPA',
   },
+  {
+    id: 'V-006',
+    type: 'Vague Language in Privacy Policy',
+    description: 'The privacy policy uses vague or overly broad language (e.g., "we may collect data to improve our services") without specifying what data is collected and for what exact purposes.',
+    recommendation: 'Update the privacy policy to be specific about the types of personal data collected, the legal basis for processing, the purpose of collection, and data retention periods.',
+    severity: 'Low',
+    category: 'Transparency',
+    law: 'GDPR Article 13 & 14',
+    learnMoreUrl: 'https://gdpr-info.eu/art-13-gdpr/',
+  },
+  {
+      id: 'V-007',
+      type: 'Data Transfer Without Adequate Safeguards',
+      description: 'User data is transferred to third-party services located in countries without an adequate level of data protection, and no appropriate safeguards like Standard Contractual Clauses (SCCs) are mentioned.',
+      recommendation: 'Ensure that any international data transfers are protected by adequate safeguards such as SCCs or Binding Corporate Rules (BCRs). Disclose these safeguards in your privacy policy.',
+      severity: 'High',
+      category: 'Data Transfers',
+      law: 'GDPR Chapter 5',
+  },
+  {
+      id: 'V-008',
+      type: 'Non-Essential Local Storage Use Without Consent',
+      description: 'localStorage is being used to store user identifiers or tracking information without explicit consent. This falls under the same consent requirements as non-essential cookies.',
+      recommendation: 'Treat data stored in localStorage with the same care as cookies. Obtain user consent before storing any non-essential data, including tracking identifiers, in localStorage.',
+      severity: 'Medium',
+      category: 'Consent & Transparency',
+      law: 'ePrivacy Directive, GDPR',
+      element: "localStorage.setItem('user_id', '...')"
+  },
+  {
+      id: 'V-009',
+      type: 'Pre-checked Consent Boxes',
+      description: 'Forms for marketing subscriptions or other consents use pre-checked boxes. GDPR requires consent to be an unambiguous, affirmative action.',
+      recommendation: 'Ensure all consent checkboxes on forms are unchecked by default, requiring the user to take a positive action to opt-in.',
+      severity: 'High',
+      category: 'User Rights',
+      law: 'GDPR Article 4(11)',
+  },
 ];
 
 export const performMockScan = async (url: string): Promise<AnalysisResult> => {
@@ -65,7 +103,7 @@ export const performMockScan = async (url: string): Promise<AnalysisResult> => {
   const result: AnalysisResult = {
     url,
     scanDate: new Date().toISOString(),
-    score: 45,
+    score: 32,
     hasConsentBanner: false,
     violations: mockViolations,
   };

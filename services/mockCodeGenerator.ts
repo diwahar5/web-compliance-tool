@@ -278,6 +278,176 @@ export default DSARForm;`,
 `
     }
   },
+  'V-006': { // Vague Language in Privacy Policy
+    'React': {
+      code: `// This is a content fix, not a code fix.
+// Example of specific language for a privacy policy:
+
+/*
+**OLD (Vague):**
+"We may collect personal information to improve our services."
+
+**NEW (Specific):**
+"**Analytics Data:** We collect anonymized IP addresses, browser types, and page view information using Google Analytics to understand user behavior and improve our website's performance. Our legal basis for this is our legitimate interest. This data is retained for 26 months."
+*/
+const PrivacyPolicySection = () => (
+  <div>
+    <h3>Analytics Data</h3>
+    <p>
+      We collect anonymized IP addresses, browser types, and page view information using Google Analytics
+      to understand user behavior and improve our website's performance. Our legal basis for this is our
+      legitimate interest. This data is retained for 26 months.
+    </p>
+  </div>
+);
+`,
+      guide: `
+- Review your privacy policy for ambiguous terms like "may collect," "etc.," or "for business purposes."
+- Replace them with specific details: **What** data, **Why** you collect it (purpose), **How long** you keep it (retention), and your **Legal Basis** (e.g., consent, legitimate interest).
+`
+    },
+    'HTML': {
+      code: `<!-- This is a content fix. Update your privacy policy page with specific language. -->
+<!-- OLD (Vague): -->
+<p>We may collect personal information to improve our services.</p>
+
+<!-- NEW (Specific): -->
+<h3>Analytics Data</h3>
+<p>
+  We collect anonymized IP addresses, browser types, and page view information using Google Analytics
+  to understand user behavior and improve our website's performance. Our legal basis for this is our
+  legitimate interest. This data is retained for 26 months.
+</p>
+`,
+      guide: `
+- Go through your privacy policy document.
+- For each data collection point, clearly state the **specific data** collected, the **purpose**, the **retention period**, and the **legal basis** for processing.
+`
+    }
+  },
+  'V-007': { // Data Transfer Without Adequate Safeguards
+    'React': {
+      code: `// This is a content fix for your privacy policy.
+const InternationalTransfersSection = () => (
+  <div>
+    <h3>International Data Transfers</h3>
+    <p>
+      Your information may be transferred to and maintained on computers located outside of your state,
+      province, country, or other governmental jurisdiction where the data protection laws may differ.
+      If you are located in the European Economic Area (EEA), we will ensure that any transfer of your
+      personal data to third countries is protected by appropriate safeguards, such as the use of
+      Standard Contractual Clauses (SCCs) approved by the European Commission.
+    </p>
+  </div>
+);
+`,
+      guide: `
+- Identify all third-party services you use that might transfer data outside the user's jurisdiction (e.g., non-EU/EEA).
+- Add a section to your privacy policy explaining that these transfers occur and what safeguards (like SCCs) are in place.
+- You must actually have these safeguards in place (e.g., signing a Data Processing Addendum with the service).
+`
+    },
+    'HTML': {
+      code: `<!-- Add a section like this to your privacy policy page -->
+<h3>International Data Transfers</h3>
+<p>
+  Your information may be transferred to and maintained on computers located outside of your state,
+  province, country, or other governmental jurisdiction where the data protection laws may differ.
+  If you are located in the European Economic Area (EEA), we will ensure that any transfer of your
+  personal data to third countries is protected by appropriate safeguards, such as the use of
+  Standard Contractual Clauses (SCCs) approved by the European Commission.
+</p>
+`,
+      guide: `
+- List the third-party services you use (e.g., cloud providers, analytics tools) and check their data processing locations.
+- Update your privacy policy to disclose international transfers and mention the legal safeguards you rely on.
+`
+    }
+  },
+  'V-008': { // Non-Essential Local Storage Use Without Consent
+    'React': {
+      code: `import { useCookieConsent } from './useCookieConsent'; // Assume a custom hook
+
+function setTrackingId(userId) {
+  const { consentGiven } = useCookieConsent();
+
+  if (consentGiven) {
+    // Only set tracking data if user has consented
+    localStorage.setItem('user_tracking_id', userId);
+  } else {
+    console.log('Consent not given. Aborting localStorage set.');
+  }
+}
+`,
+      guide: `
+- The rules for cookies also apply to other forms of local storage like \`localStorage\` and \`sessionStorage\` when used for non-essential purposes.
+- Wrap any code that writes to \`localStorage\` for tracking or analytics in a consent check.
+`
+    },
+    'HTML': {
+      code: `<script>
+// Before:
+// localStorage.setItem('user_id', '123-abc');
+
+// After:
+function saveUserIdWithConsent(userId) {
+  if (localStorage.getItem('cookie_consent') === 'true') {
+    localStorage.setItem('user_id', userId);
+  }
+}
+
+// Only call saveUserIdWithConsent after the user has accepted cookies.
+</script>
+`,
+      guide: `
+- Just like with tracking scripts, you must not write non-essential data to \`localStorage\` until the user has given consent.
+- Check your consent flag before calling \`localStorage.setItem\`.
+`
+    }
+  },
+  'V-009': { // Pre-checked Consent Boxes
+    'React': {
+      code: `import { useState } from 'react';
+
+const NewsletterForm = () => {
+  const [agreed, setAgreed] = useState(false); // Default state is false
+
+  return (
+    <form>
+      {/* ... other form fields ... */}
+      <label>
+        <input 
+          type="checkbox"
+          checked={agreed}
+          onChange={(e) => setAgreed(e.target.checked)}
+        />
+        I agree to receive marketing emails.
+      </label>
+    </form>
+  );
+};
+`,
+      guide: `
+- For checkboxes related to consent (e.g., marketing, terms of service), ensure their default state is **unchecked**.
+- The user must perform a positive action (clicking the box) to give consent. Do not use \`defaultChecked={true}\` or initialize the state to \`true\`.
+`
+    },
+    'HTML': {
+      code: `<!-- WRONG: Pre-checked box -->
+<!-- <input type="checkbox" name="newsletter" checked> Sign up for newsletter -->
+
+<!-- CORRECT: Unchecked by default -->
+<label>
+  <input type="checkbox" name="newsletter">
+  Sign up for our newsletter
+</label>
+`,
+      guide: `
+- Remove the \`checked\` attribute from any consent-related \`<input type="checkbox">\` elements.
+- Consent must be opt-in, not opt-out. The user must actively check the box.
+`
+    }
+  },
 };
 
 export const generateMockCodeFix = async (violation: Violation, framework: string): Promise<{code: string, guide: string}> => {
