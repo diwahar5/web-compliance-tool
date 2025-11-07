@@ -33,17 +33,29 @@ const StatCard: React.FC<{ label: string; value: number | string; colorClass?: s
     </div>
 );
 
-
 const ReportView: React.FC<ReportViewProps> = ({ result, onCodeGenerated, generatedCode }) => {
-    const groupedViolations = result.violations.reduce((acc, v) => {
+    // ✅ Normalize violations into an array (supports both backend object and array)
+    const violationsArray: Violation[] = Array.isArray(result.violations)
+        ? result.violations
+        : Object.keys(result.violations || {}).map((key) => ({
+            id: key,
+            title: key.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase()),
+            description: `Detected issue: ${key.replace(/_/g, ' ')}.`,
+            severity: result.violations[key] ? 'High' : 'Low', // default logic
+        }));
+
+    // ✅ Group violations by severity
+    const groupedViolations = violationsArray.reduce((acc, v) => {
         (acc[v.severity] = acc[v.severity] || []).push(v);
         return acc;
     }, {} as Record<Violation['severity'], Violation[]>);
 
-    const highSeverityCount = (groupedViolations['High']?.length || 0) + (groupedViolations['Critical']?.length || 0);
+    const highSeverityCount =
+        (groupedViolations['High']?.length || 0) +
+        (groupedViolations['Critical']?.length || 0);
     const mediumSeverityCount = groupedViolations['Medium']?.length || 0;
     const lowSeverityCount = groupedViolations['Low']?.length || 0;
-    const totalViolations = result.violations.length;
+    const totalViolations = violationsArray.length;
 
     return (
         <div className="mt-8 animate-fade-in">
@@ -51,11 +63,20 @@ const ReportView: React.FC<ReportViewProps> = ({ result, onCodeGenerated, genera
                 <h2 className="text-2xl md:text-3xl font-bold text-center text-brand-text mb-6">Overall Compliance Score</h2>
                 <div className="flex flex-col md:flex-row items-center gap-8">
                     <div className="flex-shrink-0">
-                       <ComplianceScoreCircle score={result.score} />
+                        <ComplianceScoreCircle score={result.score} />
                     </div>
                     <div className="text-center md:text-left">
                         <p className="text-brand-subtle leading-relaxed">
-                            The analysis for <a href={result.url} target="_blank" rel="noopener noreferrer" className="text-brand-accent hover:underline font-semibold">{result.url}</a> is complete. The score indicates significant compliance risks that require your attention. See the breakdown of violations below.
+                            The analysis for{' '}
+                            <a
+                                href={result.url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-brand-accent hover:underline font-semibold"
+                            >
+                                {result.url}
+                            </a>{' '}
+                            is complete. The score indicates significant compliance risks that require your attention. See the breakdown of violations below.
                         </p>
                     </div>
                 </div>
@@ -73,26 +94,26 @@ const ReportView: React.FC<ReportViewProps> = ({ result, onCodeGenerated, genera
             </div>
 
             <div className="mt-10">
-                {severityOrder.map(severity => (
-                    groupedViolations[severity] && (
+                {severityOrder.map((severity) =>
+                    groupedViolations[severity] ? (
                         <div key={severity} className="mb-8">
                             <h3 className="text-2xl font-semibold mb-4 pb-2 border-b-2 border-slate-700 text-brand-text flex items-center">
                                 {severity}
                                 <SeverityBadge severity={severity} count={groupedViolations[severity].length} />
                             </h3>
                             <div className="space-y-4">
-                                {groupedViolations[severity].map(violation => (
+                                {groupedViolations[severity].map((violation) => (
                                     <ViolationCard
-                                        key={violation.id} 
-                                        violation={violation} 
+                                        key={violation.id}
+                                        violation={violation}
                                         onCodeGenerated={onCodeGenerated}
                                         generatedCode={generatedCode[violation.id]}
                                     />
                                 ))}
                             </div>
                         </div>
-                    )
-                ))}
+                    ) : null
+                )}
             </div>
         </div>
     );
