@@ -1,67 +1,51 @@
+# main.py
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from scanner import scan_website
-from fix_snippets import FIX_SNIPPETS  # ✅ import moved to top
+from advanced_scanner import powerful_scan
+from snippet_registry import FIX_SNIPPETS
 
-# ----------------------------------------
-# App Initialization
-# ----------------------------------------
+# Initialize FastAPI app
 app = FastAPI(
-    title="Web Compliance API",
-    description="An API for scanning websites and detecting privacy compliance issues.",
-    version="1.0.0"
+    title="AI-Powered Web Compliance Scanner",
+    description="Scans websites for GDPR/CCPA violations and provides code fixes.",
+    version="2.0.0"
 )
 
-# ----------------------------------------
-# CORS Setup
-# ----------------------------------------
-origins = [
-    "http://localhost:5173",
-    "https://web-compliance-tool.vercel.app"
-]
-
+# CORS setup (open during dev)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],       # or ["*"] for full access in development
+    allow_origins=["*"],  # In production, restrict this to your frontend URL
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# ----------------------------------------
-# Root Endpoint (Health Check)
-# ----------------------------------------
+# Health check
 @app.get("/")
 def root():
-    return {"message": "Web Compliance API is running successfully."}
+    return {"message": "✅ Web Compliance API is running."}
 
-
-# ----------------------------------------
-# Website Scanner Endpoint
-# ----------------------------------------
+# --- SCAN ENDPOINT ---
 @app.get("/scan")
-def scan(url: str):
+def scan_website(url: str):
     """
-    Endpoint to perform real-time website scan.
+    Scan a website for privacy violations.
     Example: /scan?url=https://example.com
     """
     try:
-        result = scan_website(url)
+        result = powerful_scan(url)
         return {"status": "success", "data": result}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-
-# ----------------------------------------
-# Code Fix Snippet Endpoint
-# ----------------------------------------
+# --- FIX ENDPOINT ---
 @app.get("/fix")
 def get_fix(violation_id: str):
     """
-    Returns example code snippets for a given violation ID.
+    Retrieve code snippets to fix a given violation.
     Example: /fix?violation_id=insecure_cookies
     """
     snippet = FIX_SNIPPETS.get(violation_id)
     if not snippet:
-        raise HTTPException(status_code=404, detail="No fix snippet available for this violation.")
+        raise HTTPException(status_code=404, detail="No fix snippet found for this violation.")
     return {"status": "success", "data": snippet}
