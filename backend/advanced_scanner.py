@@ -578,7 +578,7 @@ def powerful_scan(url: str, save_screenshot: bool = SAVE_SCREENSHOT) -> Dict[str
             ga_anon_ok, ga_anon_info = detect_analytics_anonymize(html_combined)
             if ga_anon_info.get("analytics_present") and not ga_anon_ok:
                 add_violation(
-                    "analytics_not_anonymizing_ip",
+                    "analytics_without_anonymization",
                     "Analytics Not Configured with IP Anonymization",
                     "Medium",
                     ("Google Analytics present without `anonymize_ip` enabled which may result in IP-based identification."),
