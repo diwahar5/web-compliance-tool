@@ -1,7 +1,0 @@
-fastapi
-uvicorn
-playwright
-jinja2
-requests
-pydantic
-httpx
