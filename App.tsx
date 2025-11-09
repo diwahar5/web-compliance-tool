@@ -6,7 +6,7 @@ import ReportView from "./components/ReportView";
 import { AnalysisResult } from "./types";
 
 // ✅ Backend API URL — change this when deploying
-const BACKEND_URL = "https://web-compliance-backend.onrender.com/";
+const BACKEND_URL = "https://web-compliance-backend.onrender.com";
 // For local testing, use: const BACKEND_URL = "http://127.0.0.1:8000";
 
 // ✅ Function to perform the actual scan using FastAPI backend
