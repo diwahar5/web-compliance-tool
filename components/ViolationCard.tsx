@@ -3,7 +3,7 @@ import CodeSnippet from './CodeSnippet';
 import MarkdownRenderer from './MarkdownRenderer';
 import type { Violation, ViolationSeverity } from '../types';
 
-const BACKEND_URL = "https://web-compliance-backend.onrender.com"; // change for production if needed
+const BACKEND_URL = "http://127.0.0.1:8000"; // change for production if needed
 
 const severityBadgeConfig: Record<ViolationSeverity, string> = {
   'Low': 'bg-gray-500/20 text-gray-300',
